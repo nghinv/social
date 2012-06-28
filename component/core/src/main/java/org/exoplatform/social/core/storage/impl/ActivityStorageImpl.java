@@ -427,7 +427,7 @@ public class ActivityStorageImpl extends AbstractStorage implements ActivityStor
       }
       else {
 
-        _saveActivity(activity);
+        updateActivity(activity);
 
       }
 
@@ -1205,6 +1205,13 @@ public class ActivityStorageImpl extends AbstractStorage implements ActivityStor
 
       if (changedActivity.getTitle() == null) changedActivity.setTitle(activityEntity.getTitle());
       if (changedActivity.getBody() == null) changedActivity.setBody(activityEntity.getBody());
+      if (changedActivity.getTemplateParams() == null){
+        if(activityEntity.getParams() != null && activityEntity.getParams().getParams() != null){
+          changedActivity.setTemplateParams(activityEntity.getParams().getParams());
+        } else {
+          changedActivity.setTemplateParams(new HashMap<String, String>());
+        }
+      };
 
       _saveActivity(changedActivity);
       

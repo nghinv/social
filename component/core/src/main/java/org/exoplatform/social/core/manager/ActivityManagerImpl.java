@@ -180,6 +180,7 @@ public class ActivityManagerImpl implements ActivityManager {
 
     existingActivity.setTitle(null);
     existingActivity.setBody(null);
+    existingActivity.setTemplateParams(null);
 
     String[] identityIds = existingActivity.getLikeIdentityIds();
     if (ArrayUtils.contains(identityIds, identity.getId())) {
@@ -195,6 +196,10 @@ public class ActivityManagerImpl implements ActivityManager {
    * {@inheritDoc}
    */
   public void deleteLike(ExoSocialActivity activity, Identity identity) {
+    activity.setTitle(null);
+    activity.setBody(null);
+    activity.setTemplateParams(null);
+
     String[] identityIds = activity.getLikeIdentityIds();
     if (ArrayUtils.contains(identityIds, identity.getId())) {
       identityIds = (String[]) ArrayUtils.removeElement(identityIds, identity.getId());
