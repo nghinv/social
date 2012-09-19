@@ -76,6 +76,17 @@
   </module>
 
   <module>
+    <name>social-image-cropper</name>
+    <script>
+       <name>eXo.social.webui.UIImageCropper</name>
+       <path>/javascript/eXo/social/webui/UIImageCropper.js</path>
+    </script>
+    <depends>
+       <module>social-core</module>
+    </depends>
+  </module>
+  
+  <module>
     <name>social-ui-profile</name>
     <script>
        <name>eXo.social.webui.UIProfile</name>

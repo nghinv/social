@@ -45,6 +45,7 @@ import org.exoplatform.webui.event.EventListener;
 @ComponentConfig(
   template = "classpath:groovy/social/webui/UIAvatarUploadContent.gtmpl",
   events = {
+    @EventConfig(listeners = UIAvatarUploadContent.CropActionListener.class),
     @EventConfig(listeners = UIAvatarUploadContent.SaveActionListener.class),
     @EventConfig(listeners = UIAvatarUploadContent.CancelActionListener.class)
   }
@@ -109,6 +110,18 @@ public class UIAvatarUploadContent extends UIContainer {
     return imageSource;
   }
 
+  /**
+   * Accepts and saves the uploaded image to profile.
+   * Closes the popup window, refreshes UIProfile.
+   *
+   */
+  public static class CropActionListener extends EventListener<UIAvatarUploadContent> {
+    @Override
+    public void execute(Event<UIAvatarUploadContent> event) throws Exception {
+      UIAvatarUploadContent uiAvatarUploadContent = event.getSource();
+    }
+  }
+  
   /**
    * Accepts and saves the uploaded image to profile.
    * Closes the popup window, refreshes UIProfile.

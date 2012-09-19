@@ -23,7 +23,7 @@
   def pcontext = Util.getPortalRequestContext();
   def jsManager = pcontext.getJavascriptManager();
   jsManager.addOnLoadJavascript("eXo.core.Browser.fillUpFreeSpace('${uicomponent.id}')");
-  
+  jsManager.loadScriptResource("social-image-cropper");
 %>
 
 <div class="UIProfile" id="$uicomponent.id">
