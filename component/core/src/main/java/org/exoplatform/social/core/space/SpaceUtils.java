@@ -58,6 +58,8 @@ import org.exoplatform.portal.mop.navigation.NavigationServiceException;
 import org.exoplatform.portal.mop.navigation.NavigationState;
 import org.exoplatform.portal.mop.navigation.NodeContext;
 import org.exoplatform.portal.mop.navigation.Scope;
+import org.exoplatform.portal.mop.page.PageContext;
+import org.exoplatform.portal.mop.page.PageService;
 import org.exoplatform.portal.mop.user.UserNavigation;
 import org.exoplatform.portal.mop.user.UserNode;
 import org.exoplatform.portal.mop.user.UserPortal;
@@ -433,7 +435,6 @@ public class SpaceUtils {
    */
   public static void removePagesAndGroupNavigation(Space space) throws Exception {
     // remove pages
-    DataStorage dataStorage = getDataStorage();
     String groupId = space.getGroupId();
     NavigationContext spaceNavCtx = SpaceUtils.getGroupNavigationContext(groupId);
     // return in case group navigation was removed by portal SOC-548
@@ -441,12 +442,12 @@ public class SpaceUtils {
       return;
     }
     NodeContext<NodeContext<?>> homeNodeCtx = SpaceUtils.getHomeNodeWithChildren(spaceNavCtx, groupId);
-
+    //TODO: SOC-2842
+    PageService pageService = (PageService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PageService.class);
     for (NodeContext<?> child : homeNodeCtx.getNodes()) {
        @SuppressWarnings("unchecked")
-       NodeContext<NodeContext<?>> childNode = (NodeContext<NodeContext<?>>) child;
-       Page page = dataStorage.getPage(childNode.getState().getPageRef());
-       dataStorage.remove(page);
+      NodeContext<NodeContext<?>> childNode = (NodeContext<NodeContext<?>>) child;
+       pageService.destroyPage(childNode.getState().getPageRef());
     }
     
     
@@ -462,12 +463,13 @@ public class SpaceUtils {
    * @param space
    * @throws Exception
    */
-  @SuppressWarnings("unchecked")
   public static void changeSpaceUrlPreference(UserNode spacePageNode,
                                               Space space,
                                               String newSpaceName) throws Exception {
     DataStorage dataStorage = getDataStorage();
-    Page page = dataStorage.getPage(spacePageNode.getPageRef());
+    // TODO: SOC-2842: review get pageId
+    Page page = dataStorage.getPage(spacePageNode.getPageRef().format());
+    System.out.println("\n\n ================page id: " + page.getId());
     
     ArrayList<ModelObject> pageChildren = page.getChildren();
     
@@ -648,7 +650,7 @@ public class SpaceUtils {
     UIWorkingWorkspace uiWorkingWS = uiPortalApplication.getChildById(UIPortalApplication.UI_WORKING_WS_ID);
     PortalRequestContext pContext = Util.getPortalRequestContext();
     pContext.addUIComponentToUpdateByAjax(uiWorkingWS);
-    pContext.setFullRender(true);
+    pContext.ignoreAJAXUpdateOnPortlets(true);
   }
 
   /**

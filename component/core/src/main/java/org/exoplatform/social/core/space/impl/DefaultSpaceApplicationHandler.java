@@ -44,7 +44,8 @@ import org.exoplatform.portal.mop.navigation.NodeContext;
 import org.exoplatform.portal.mop.navigation.NodeModel;
 import org.exoplatform.portal.mop.navigation.NodeState;
 import org.exoplatform.portal.mop.navigation.Scope;
-import org.exoplatform.portal.mop.user.UserPortal;
+import org.exoplatform.portal.mop.page.PageKey;
+import org.exoplatform.portal.mop.page.PageService;
 import org.exoplatform.portal.pom.config.Utils;
 import org.exoplatform.portal.pom.spi.gadget.Gadget;
 import org.exoplatform.portal.pom.spi.portlet.Portlet;
@@ -77,8 +78,6 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
   public static final String SPACE_TEMPLATE_PAGE_ID = "portal::classic::spacetemplate";
 
   public static final String APPLICATION_CONTAINER = "Application";
-
-  private static final String SPACE_DEFAULT_ICON = "SpaceDefaultIcon";
 
   /**
    * The {groupId} preference value pattern
@@ -181,12 +180,11 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
         return;
       }
       NodeContext<NodeContext<?>> homeNodeCtx = SpaceUtils.getHomeNodeWithChildren(spaceNavCtx, groupId);
-
+      PageService pageService = (PageService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PageService.class);
       for (NodeContext<?> child : homeNodeCtx.getNodes()) {
         @SuppressWarnings("unchecked")
         NodeContext<NodeContext<?>> childNode = (NodeContext<NodeContext<?>>) child;
-        Page page = dataStorage.getPage(childNode.getState().getPageRef());
-        dataStorage.remove(page);
+        pageService.destroyPage(childNode.getState().getPageRef());
      }
       
      
@@ -300,8 +298,6 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
       String nodeName = appName;
            
       ExoContainer container = ExoContainerContext.getCurrentContainer();
-      UserPortalConfigService configService = (UserPortalConfigService)
-                                              container.getComponentInstanceOfType(UserPortalConfigService.class);
 
       NodeContext<?> removedNode = homeNodeCtx.getNode(nodeName);
       if (removedNode == null) {
@@ -322,15 +318,15 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
       }
       
       //remove page
+      PageService pageService = (PageService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PageService.class);
       if (removedNode != null) {
-        String pageRef = removedNode.getState().getPageRef();
-        if (pageRef != null && pageRef.length() > 0) {
-          Page page = configService.getPage(pageRef);
-          if (page != null)
-            dataStorage.remove(page);
+        PageKey pageRef = removedNode.getState().getPageRef();
+        if (pageRef != null) {
+          pageService.destroyPage(pageRef);
           UIPortal uiPortal = Util.getUIPortal();
           // Remove from cache
-          uiPortal.setUIPage(pageRef, null);
+          //TODO SOC-2842
+          uiPortal.setUIPage(pageRef.getName(), null);
         }
       }
 
@@ -411,7 +407,7 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
               space.getGroupId());
       page.setName(pageName);
       page.setTitle(pageTitle);
-      
+
       dataStorage.create(page);
       page = dataStorage.getPage(page.getPageId());
       //setting some data to page.
@@ -437,19 +433,15 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
       
     }
     NodeContext<NodeContext<?>> childNodeCtx = nodeCtx.add(null, pageName);
-    childNodeCtx.setState(new NodeState.Builder().label(label).icon(spaceApplication.getIcon()).pageRef(page.getPageId()).build());
+    childNodeCtx.setState(new NodeState.Builder()
+                                        .label(label)
+                                        .icon(spaceApplication.getIcon())
+                                        .pageRef(page.getPageKey()).build());
     return childNodeCtx;
   }
   
   
 
-  /**
-   * Retrieving the UserPortal
-   * @return
-   */
-  private UserPortal getUserPortal() {
-    return Util.getUIPortalApplication().getUserPortalConfig().getUserPortal();
-  }
   /**
    * Gets an application by its id.
    *
@@ -563,7 +555,7 @@ public class DefaultSpaceApplicationHandler implements SpaceApplicationHandler {
    * @param perm
    * @return
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private void setPermissionForPage(ArrayList<ModelObject> children, String perm) {
     for (ModelObject modelObject : children) {
       if (modelObject instanceof org.exoplatform.portal.config.model.Application<?>) {

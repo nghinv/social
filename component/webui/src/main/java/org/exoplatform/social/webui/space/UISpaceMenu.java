@@ -24,7 +24,7 @@ import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.config.DataStorage;
 import org.exoplatform.portal.config.UserPortalConfigService;
 import org.exoplatform.portal.config.model.Page;
-import org.exoplatform.portal.mop.user.UserNavigation;
+import org.exoplatform.portal.mop.page.PageContext;
 import org.exoplatform.portal.mop.user.UserNode;
 import org.exoplatform.portal.mop.user.UserPortal;
 import org.exoplatform.portal.webui.portal.UIPortal;
@@ -152,7 +152,6 @@ public class UISpaceMenu extends UIContainer {
       }
 
       String oldName = selectedNode.getName();
-      String oldUri = selectedNode.getURI();
       if (selectedNode.getResolvedLabel().equals(newSpaceAppName)) {
         prContext.getResponse().sendRedirect(Utils.getSpaceURL(selectedNode));
         return;
@@ -196,12 +195,18 @@ public class UISpaceMenu extends UIContainer {
       renamedNode.setLabel(newSpaceAppName);
       UserPortalConfigService configService = spaceMenu.getApplicationComponent(UserPortalConfigService.class);
       DataStorage dataService = spaceMenu.getApplicationComponent(DataStorage.class);
-      Page page = configService.getPage(renamedNode.getPageRef());
-      if (page != null) {
+      
+      PageContext pageContext = configService.getPage(renamedNode.getPageRef());
+      //TODO: SOC-2842
+      if (pageContext != null) {
+        Page page = new Page();
+        page.setPageId(pageContext.getKey().format());
+        pageContext.update(page);
         page.setTitle(newNodeName);
         dataService.save(page);
       }
-      UserPortal userPortal = Util.getUIPortalApplication().getUserPortalConfig().getUserPortal();
+
+      UserPortal userPortal = ((PortalRequestContext)PortalRequestContext.getCurrentInstance()).getUserPortal();
       userPortal.saveNode(homeNode, null);
       
       String newUri = renamedNode.getURI();

@@ -18,6 +18,7 @@
 package org.exoplatform.social.webui.space;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,6 +42,10 @@ import org.exoplatform.portal.config.model.Page;
 import org.exoplatform.portal.mop.Described;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.portal.mop.Visibility;
+import org.exoplatform.portal.mop.page.PageContext;
+import org.exoplatform.portal.mop.page.PageKey;
+import org.exoplatform.portal.mop.page.PageService;
+import org.exoplatform.portal.mop.page.PageState;
 import org.exoplatform.portal.mop.user.UserNavigation;
 import org.exoplatform.portal.webui.page.UIPageSelector;
 import org.exoplatform.portal.webui.page.UIWizardPageSetInfo;
@@ -59,7 +64,6 @@ import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.exception.MessageException;
 import org.exoplatform.webui.form.UIFormCheckBoxInput;
@@ -505,12 +509,18 @@ public class UIPageNodeForm extends UIFormTabPane {
       if (pageSelector.getPage() == null) {
         pageSelector.setValue(null);
       } else {
-        Page page = pageSelector.getPage();
-        DataStorage storage = uiPageNodeForm.getApplicationComponent(DataStorage.class);
+        //TODO SOC-2842
+        PageContext pageCt = pageSelector.getPage();
+        PageService pService = uiPageNodeForm.getApplicationComponent(PageService.class);
+        if(pageCt != null) {
+          pService.savePage(pageCt);
+          pageSelector.setValue(pageCt.getKey().format());
+        }
+       /* DataStorage storage = uiPageNodeForm.getApplicationComponent(DataStorage.class);
         if (storage.getPage(page.getPageId()) == null) {
           storage.create(page);
           pageSelector.setValue(page.getPageId());
-        }
+        }*/
       }
 
       if (pageNode.getLabel() == null)
@@ -664,6 +674,7 @@ public class UIPageNodeForm extends UIFormTabPane {
       UIFormStringInput uiPageName = uiInputSet.getChildById("pageName");
       UIFormStringInput uiPageTitle = uiInputSet.getChildById("pageTitle");
 
+      
       Page page = new Page();
       page.setOwnerType(uiForm.getOwnerType().getName());
       page.setOwnerId(ownerId);
@@ -692,8 +703,13 @@ public class UIPageNodeForm extends UIFormTabPane {
         pcontext.addUIComponentToUpdateByAjax(uiPortalApp.getUIPopupMessages());
         return;
       }
-
-      pageSelector.setPage(page);
+      //TODO SOC-2842
+      PageState state = new PageState(page.getTitle(), page.getDescription(),
+                                      page.isShowMaxWindow(), page.getFactoryId(),
+                                      Arrays.asList(page.getAccessPermissions()), page.getEditPermission());
+      PageKey key = PageKey.parse(page.getPageId());
+      PageContext pageContext = new PageContext(key, state);
+      pageSelector.setPage(pageContext);
     }
   }
 

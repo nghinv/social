@@ -25,6 +25,8 @@ import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.config.DataStorage;
 import org.exoplatform.portal.config.UserPortalConfigService;
 import org.exoplatform.portal.config.model.Page;
+import org.exoplatform.portal.mop.page.PageContext;
+import org.exoplatform.portal.mop.page.PageService;
 import org.exoplatform.portal.mop.user.UserNode;
 import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
@@ -344,8 +346,12 @@ public class UISpaceInfo extends UIForm {
       renamedNode.setLabel(newNodeLabel);
       renamedNode.setName(newNodeName);
 
-      Page page = configService.getPage(renamedNode.getPageRef());
-      if (page != null) {
+      PageContext pageContext = configService.getPage(renamedNode.getPageRef());
+      //TODO: SOC-2842
+      if (pageContext != null) {
+        Page page = new Page();
+        page.setPageId(pageContext.getKey().format());
+        pageContext.update(page);
         page.setTitle(newNodeLabel);
         dataService.save(page);
       }

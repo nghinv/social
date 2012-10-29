@@ -33,6 +33,9 @@ import org.exoplatform.portal.mop.description.DescriptionService;
 import org.exoplatform.portal.mop.navigation.NavigationError;
 import org.exoplatform.portal.mop.navigation.NavigationServiceException;
 import org.exoplatform.portal.mop.navigation.Scope;
+import org.exoplatform.portal.mop.page.PageContext;
+import org.exoplatform.portal.mop.page.PageKey;
+import org.exoplatform.portal.mop.page.PageService;
 import org.exoplatform.portal.mop.user.UserNavigation;
 import org.exoplatform.portal.mop.user.UserNode;
 import org.exoplatform.portal.mop.user.UserNodeFilterConfig;
@@ -402,8 +405,9 @@ public class UISpaceNavigationNodeSelector extends UIContainer {
       UserPortalConfigService userService = uiNodeSelector.getApplicationComponent(UserPortalConfigService.class);
 
       // get selected page
+      //TODO: SOC-2842
       String pageId = selectedPageNode.getPageRef();
-      Page selectPage = (pageId != null) ? userService.getPage(pageId) : null;
+      PageContext selectPage = (pageId != null) ? userService.getPage(PageKey.parse(pageId)) : null;
       if (selectPage != null) {
         UserACL userACL = uiApp.getApplicationComponent(UserACL.class);
         if (!userACL.hasEditPermission(selectPage)) {
@@ -432,13 +436,16 @@ public class UISpaceNavigationNodeSelector extends UIContainer {
         uiToolPanel.setWorkingComponent(UIPage.class, null);
         UIPage uiPage = (UIPage) uiToolPanel.getUIComponent();
 
-        if (selectPage.getTitle() == null)
-          selectPage.setTitle(selectedPageNode.getLabel());
+        Page page = new Page();
+        selectPage.update(page);
+        page.setPageId(selectPage.getKey().format());
+        if (selectPage.getState().getDisplayName() == null)
+          page.setTitle(selectedPageNode.getLabel());
 
         // convert Page to UIPage
-        PortalDataMapper.toUIPage(uiPage, selectPage);
+        PortalDataMapper.toUIPage(uiPage, page);
         Util.getPortalRequestContext().addUIComponentToUpdateByAjax(uiWorkingWS);
-        Util.getPortalRequestContext().setFullRender(true);
+        Util.getPortalRequestContext().ignoreAJAXUpdateOnPortlets(true);
       } else {
         uiApp.addMessage(new ApplicationMessage("UIPageNodeSelector.msg.notAvailable", null));
       }
@@ -466,10 +473,11 @@ public class UISpaceNavigationNodeSelector extends UIContainer {
       UIApplication uiApp = context.getUIApplication();
       UserPortalConfigService service = uiApp.getApplicationComponent(UserPortalConfigService.class);
       String pageId = node.getPageRef();
-      Page page = (pageId != null) ? service.getPage(pageId) : null;
-      if (page != null) {
+      //TODO: SOC-2842
+      PageContext pageContext = (pageId != null) ? service.getPage(PageKey.parse(pageId)) : null;
+      if (pageContext != null) {
         UserACL userACL = uiApp.getApplicationComponent(UserACL.class);
-        if (!userACL.hasPermission(page)) {
+        if (!userACL.hasPermission(pageContext)) {
           uiApp.addMessage(new ApplicationMessage("UIPageBrowser.msg.UserNotPermission",
                                                   new String[] { pageId },
                                                   1));
@@ -658,12 +666,14 @@ public class UISpaceNavigationNodeSelector extends UIContainer {
     }
 
     private String clonePageFromNode(TreeNode node, String pageName, SiteKey siteKey) throws Exception {
-      String pageId = node.getPageRef();
-      if (pageId != null) {
-        Page page = service.getPage(pageId);
+      //TODO: SOC-2842
+      PageKey pagekey= PageKey.parse(node.getPageRef());
+      if (pagekey != null) {
+        PageContext page = service.getPage(pagekey);
         if (page != null) {
-          page = dataStorage.clonePage(pageId, siteKey.getTypeName(), siteKey.getName(), pageName);
-          return page.getPageId();
+          PageService pageService = uiNodeSelector.getApplicationComponent(PageService.class);
+          page = pageService.clone(pagekey, new PageKey(siteKey, pageName));
+          return page.getKey().format();
         }
       }
       return null;
