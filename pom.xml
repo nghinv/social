@@ -91,11 +91,12 @@
     <jbossxb.version>2.0.1.GA</jbossxb.version>
     <jboss-common-core.version>2.2.9.GA</jboss-common-core.version>
 
-    <org.exoplatform.kernel.version>2.3.6-GA</org.exoplatform.kernel.version>
-    <org.exoplatform.core.version>2.4.6-GA</org.exoplatform.core.version>
-    <org.exoplatform.ws.version>2.2.6-GA</org.exoplatform.ws.version>
-    <org.exoplatform.jcr.version>1.14.6-GA</org.exoplatform.jcr.version>
-    <org.exoplatform.portal.version>3.4.0.Final</org.exoplatform.portal.version>
+    <org.exoplatform.kernel.version>2.4.0-CR1</org.exoplatform.kernel.version>
+    <org.exoplatform.core.version>2.5.0-CR1</org.exoplatform.core.version>
+    <org.exoplatform.ws.version>2.3.0-CR1</org.exoplatform.ws.version>
+    <org.exoplatform.jcr.version>1.15.0-CR1</org.exoplatform.jcr.version>
+    <org.gatein.portal.version>3.5.0.Beta01</org.gatein.portal.version>
+    <!--org.exoplatform.portal.version>3.4.0.Final</org.exoplatform.portal.version-->
     <org.exoplatform.ecms.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.ecms.version>  
 
    
@@ -103,17 +104,19 @@
     <org.exoplatform.exopackage.version>1.1.4</org.exoplatform.exopackage.version>
     <org.exoplatform.tool.version>1.0.0</org.exoplatform.tool.version>
 
-    <org.gatein.common.version>2.0.4-GA</org.gatein.common.version>
-    <org.gatein.wci.version>2.2.0-Beta02</org.gatein.wci.version>
-    <org.gatein.pc.version>2.3.2-GA</org.gatein.pc.version>
-    <org.gatein.wsrp.version>2.2.0-Beta04</org.gatein.wsrp.version>
-    <org.gatein.mop.version>1.1.1-GA</org.gatein.mop.version>
-    <org.shindig.version>2.0.2-CP01</org.shindig.version>
-    <org.chromattic.version>1.1.4</org.chromattic.version>
+    <org.gatein.common.version>2.1.0.Beta01</org.gatein.common.version>
+    <org.gatein.wci.version>2.3.0.Beta02</org.gatein.wci.version>
+    <org.gatein.pc.version>2.4.0.Beta02</org.gatein.pc.version>
+    <org.gatein.wsrp.version>2.2.0.Beta09</org.gatein.wsrp.version>
+    <org.gatein.mop.version>1.2.0.Beta01</org.gatein.mop.version>
+
+    <org.shindig.version>2.0.2.Final-gatein-2</org.shindig.version>
+    <org.chromattic.version>1.2.0-beta1</org.chromattic.version>
+
     <org.wikbook.version>0.9.37</org.wikbook.version>
     <docbkx-maven-plugin.version>2.0.13</docbkx-maven-plugin.version>
     <org.fontbox.version>0.1.0</org.fontbox.version>
-    <org.slf4j.version>1.5.8</org.slf4j.version>
+    <org.slf4j.version>1.6.1</org.slf4j.version>
     <org.json.version>20070829</org.json.version>
     <org.jboss.version>2.2.9.GA</org.jboss.version>
     <org.reflext.version>1.1.0</org.reflext.version>
