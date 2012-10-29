@@ -7,7 +7,7 @@ function getProduct(version) {
   product.name = "eXoPortal" ;
   product.portalwar = "portal.war" ;
   product.codeRepo = "portal" ;//module in modules/portal/module.js
-  product.serverPluginVersion = "${org.exoplatform.portal.version}"; // CHANGED for Social to match portal version. It was ${project.version}
+  product.serverPluginVersion = "${org.gatein.portal.version}"; // CHANGED for Social to match portal version. It was ${project.version}
 
   var kernel = Module.GetModule("kernel") ;
   var core = Module.GetModule("core") ;
@@ -28,7 +28,7 @@ function getProduct(version) {
   product.addDependencies(portal.web.portal);
 
   // starter for social
-  portal.starter = new Project("org.exoplatform.portal", "exo.portal.starter.war", "war", portal.version);
+  portal.starter = new Project("org.gatein.portal", "exo.portal.starter.war", "war", portal.version);
   portal.starter.deployName = "zzzstarter";
   product.addDependencies(portal.starter);
   product.addDependencies(social.component.common);
