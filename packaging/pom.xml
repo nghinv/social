@@ -23,8 +23,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>social</artifactId>
     <groupId>org.exoplatform.social</groupId>
+    <artifactId>social</artifactId>
     <version>4.0.0.Alpha1-SNAPSHOT</version>
   </parent>
 
@@ -38,7 +38,7 @@
   <modules>
     <module>module</module>
     <module>product</module>
-    <module>pkg</module>
+    <module>tomcat</module>
   </modules>
 
 </project>
