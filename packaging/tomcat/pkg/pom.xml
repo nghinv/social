@@ -79,7 +79,7 @@
     <dependency>
       <groupId>caja</groupId>
       <artifactId>json_simple</artifactId>
-      <version>${caja.version}</version>
+      <version>${caja.json_simple.version}</version>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
@@ -239,7 +239,7 @@
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>jsr250-api</artifactId>
-      <version>${javax.annotation.version}</version>
+      <version>${javax.jsr250-api.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.ccpp</groupId>
@@ -255,6 +255,7 @@
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <version>${javax.jcr.version}</version>
+      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>
@@ -274,7 +275,7 @@
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
-      <version>${javax.transaction.version}</version>
+      <version>${javax.jta.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -292,12 +293,6 @@
       <version>${jboss.jbossts.version}</version>
     </dependency>
     <dependency>
-      <groupId>jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <version>${javax.jcr.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>${joda-time.version}</version>
@@ -310,7 +305,7 @@
     <dependency>
       <groupId>net.jcip</groupId>
       <artifactId>jcip-annotations</artifactId>
-      <version>${net.jcip.version}</version>
+      <version>${jcip.version}</version>
     </dependency>
     <dependency>
       <groupId>net.oauth.core</groupId>
@@ -331,13 +326,9 @@
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-core</artifactId>
       <version>${net.sf.ehcache.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>${net.sf.ehcache.version}</version>
       <type>jar</type>
     </dependency>
+
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
@@ -729,7 +720,7 @@
     <dependency>
       <groupId>org.gatein.captcha</groupId>
       <artifactId>simplecaptcha</artifactId>
-      <version>${org.gatein.captcha.version}</version>
+      <version>${nl.captcha.simplecaptcha.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gatein.common</groupId>
@@ -1011,22 +1002,22 @@
     <dependency>
       <groupId>org.gatein.shindig</groupId>
       <artifactId>shindig-gadgets</artifactId>
-      <version>${org.gatein.shindig.version}</version>
+      <version>${org.shindig.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gatein.shindig</groupId>
       <artifactId>shindig-features</artifactId>
-      <version>${org.gatein.shindig.version}</version>
+      <version>${org.shindig.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gatein.shindig</groupId>
       <artifactId>shindig-common</artifactId>
-      <version>${org.gatein.shindig.version}</version>
+      <version>${org.shindig.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gatein.shindig</groupId>
       <artifactId>shindig-social-api</artifactId>
-      <version>${org.gatein.shindig.version}</version>
+      <version>${org.shindig.version}</version>
     </dependency>
     <dependency>
       <groupId>org.gatein.sso</groupId>
@@ -1061,15 +1052,17 @@
     <dependency>
       <groupId>org.gatein.web</groupId>
       <artifactId>redirect</artifactId>
-      <version>${org.gatein.web.version}</version>
+      <version>${org.gatein.portal.version}</version>
     </dependency>
     <dependency>
+      <?rename wsrp-admin-ui.war?>
       <groupId>org.gatein.wsrp</groupId>
       <artifactId>wsrp-admin-gui</artifactId>
       <version>${org.gatein.wsrp.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
+      <?rename wsrp-producer.war?>
       <groupId>org.gatein.wsrp</groupId>
       <artifactId>wsrp-producer</artifactId>
       <version>${org.gatein.wsrp.version}</version>
@@ -1265,7 +1258,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.6</version>
+      <version>${org.slf4j.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>

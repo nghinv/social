@@ -36,8 +36,6 @@
   <description>eXo Social Packaging</description>
 
   <modules>
-    <module>module</module>
-    <module>product</module>
     <module>tomcat</module>
   </modules>
 

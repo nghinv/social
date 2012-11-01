@@ -37,11 +37,11 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>quartz</groupId>
-      <artifactId>quartz</artifactId>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <scope>provided</scope>
+      </dependency>
 
      <dependency>
       <groupId>rome</groupId>

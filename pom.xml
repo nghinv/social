@@ -55,7 +55,9 @@
     <javax.ccpp.version>1.0</javax.ccpp.version>
     <javax.xml.bind.version>2.1</javax.xml.bind.version>
     <javax.inject.version>1</javax.inject.version>
-    <javax.activation.version>1.1.1</javax.inject.version>
+    <javax.activation.version>1.1.1</javax.activation.version>
+    <javax.mail.version>1.4.4</javax.mail.version>
+    <javax.jta.version>1.1</javax.jta.version>
 
     <asm.version>1.5.3</asm.version>
     <antlr.version>2.7.6rc1</antlr.version>
@@ -90,10 +92,11 @@
     <stax.version>1.0</stax.version>
     <xerces.version>2.9.1</xerces.version>
     <xml-apis.version>1.3.04</xml-apis.version>
-    <quartz.version>1.5.2</quartz.version>
+    
     <picocontainer.version>1.1</picocontainer.version>
     <jbossxb.version>2.0.1.GA</jbossxb.version>
     <jboss-common-core.version>2.2.9.GA</jboss-common-core.version>
+    <jboss.jbossts.version>4.6.1.GA</jboss.jbossts.version>
 
     <org.exoplatform.kernel.version>2.4.0-CR1</org.exoplatform.kernel.version>
     <org.exoplatform.core.version>2.5.0-CR1</org.exoplatform.core.version>
@@ -145,7 +148,8 @@
     <org.staxnav.version>0.9.6</org.staxnav.version>
 
 
-    <net.sf.ehcache.version>1.6.0</net.sf.ehcache.version>
+    <net.sf.ehcache.version>2.2.0</net.sf.ehcache.version>
+    <net.oauth.core.version>20100527</net.oauth.core.version>
     <net.oauth.core.oauth.version>20100527</net.oauth.core.oauth.version>
     <net.oauth.core.oauth-provider.version>20100527</net.oauth.core.oauth-provider.version>
     <net.oauth.core.oauth-httpclient4.version>20090913</net.oauth.core.oauth-httpclient4.version>
@@ -168,6 +172,40 @@
     <aopalliance.version>1.0</aopalliance.version>
     <com.jhlabs.version>2.0.235</com.jhlabs.version>
     <com.thoughtworks.xstream.version>1.4.2</com.thoughtworks.xstream.version>
+    <org.codehaus.groovy.version>1.7.6</org.codehaus.groovy.version>
+    <eu.medsea.mimeutil.version>2.1.3</eu.medsea.mimeutil.version>
+    <jcip.version>1.0</jcip.version>
+    <javax.jsr250-api.version>1.0</javax.jsr250-api.version>
+    <joda-time.version>1.6.2</joda-time.version>
+    
+    <dom4j.version>1.6.1</dom4j.version>
+    <log4j.version>1.2.16</log4j.version>
+    <net.sourceforge.nekohtml.version>1.9.14</net.sourceforge.nekohtml.version>
+    <org.apache.sanselan.version>0.97-incubator</org.apache.sanselan.version>
+    <org.apache.tika.version>1.2</org.apache.tika.version>
+    <org.apache.ws.commons.version>1.0.1</org.apache.ws.commons.version>
+    <org.apache.xmlbeans.version>2.3.0</org.apache.xmlbeans.version>
+    <org.ccil.cowan.tagsoup.version>1.2</org.ccil.cowan.tagsoup.version>
+    <org.hibernate.version>4.1.6.Final</org.hibernate.version>
+    <org.htmlparser.version>1.6</org.htmlparser.version>
+    <org.hibernate.common.version>4.0.1.Final</org.hibernate.common.version>
+    <org.hibernate.javax.persistence.version>1.0.1.Final</org.hibernate.javax.persistence.version>
+    <org.hsqldb.version>2.0.0</org.hsqldb.version>
+    <org.infinispan.version>5.1.7.Final</org.infinispan.version>
+    <org.jasig.cas.client.version>3.2.1</org.jasig.cas.client.version>
+    <org.javassist.version>3.14.0-GA</org.javassist.version>
+    <org.jboss.cache.version>3.2.6.GA</org.jboss.cache.version>
+    <org.jboss.logging.version>3.1.2.GA</org.jboss.logging.version>
+    <org.jboss.marshalling.version>1.3.15.GA</org.jboss.marshalling.version> 
+    <org.jdom.version>1.1.2</org.jdom.version>
+    <org.jgroups.version>2.11.1.Final</org.jgroups.version>
+    <org.jibx.version>1.2.2</org.jibx.version>
+    <org.quartz-scheduler.version>1.8.4</org.quartz-scheduler.version>
+    <oswego-concurrent.version>1.3.4</oswego-concurrent.version>
+    <rhino.version>1.7R2</rhino.version>
+    <xpp3.version>1.1.4c</xpp3.version>
+    <caja.json_simple.version>r1</caja.json_simple.version>
+    
     
     
     
@@ -225,9 +263,60 @@
 
     <dependencyManagement>
       <dependencies>
-         <!-- Needed becuase of a Maven bug. Components depend on gatein-dep and for some
-              reasons with Maven 2.2.1 it can't find that dependency anymore
-         -->
+        <!-- JavaX -->
+        <dependency>
+         <groupId>javax.resource</groupId>
+         <artifactId>connector-api</artifactId>
+         <version>${javax.resource.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+          <version>${javax.servlet.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.portlet</groupId>
+          <artifactId>portlet-api</artifactId>
+          <version>${javax.portlet.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+          <version>${javax.jcr.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+          <version>${javax.ws.rs.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+          <version>${javax.xml.bind.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.quartz-scheduler</groupId>
+          <artifactId>quartz</artifactId>
+          <version>${org.quartz-scheduler.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.hsqldb</groupId>
+          <artifactId>hsqldb</artifactId>
+          <version>${hsqldb.version}</version>
+        </dependency>
+        <dependency>
+         <groupId>org.javassist</groupId>
+         <artifactId>javassist</artifactId>
+         <version>${javassist.version}</version>
+         <type>jar</type>
+        </dependency>
+        <dependency>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+          <version>${org.json.version}</version>
+        </dependency>
+      
         <dependency>
             <groupId>org.gatein</groupId>
             <artifactId>gatein-dep</artifactId>
@@ -391,6 +480,11 @@
             <artifactId>exo.ws.frameworks.json</artifactId>
             <version>${org.exoplatform.ws.version}</version>
          </dependency>
+         <dependency>
+           <groupId>org.exoplatform.ws</groupId>
+           <artifactId>exo.ws.testframework</artifactId>
+           <version>${org.exoplatform.ws.version}</version>
+         </dependency>
 
         <!-- GateIn components -->
         <dependency>
@@ -403,6 +497,23 @@
             <artifactId>common-common</artifactId>
             <version>${org.gatein.common.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.exoplatform.commons</groupId>
+            <artifactId>commons-webui-ext</artifactId>
+            <version>${org.exoplatform.commons.version}</version>
+            <type>jar</type>
+         </dependency>
+         <dependency>
+            <groupId>org.exoplatform.commons</groupId>
+            <artifactId>commons-component-upgrade</artifactId>
+            <version>${org.exoplatform.commons.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.exoplatform.commons</groupId>
+            <artifactId>commons-component-common</artifactId>
+            <version>${org.exoplatform.commons.version}</version>
+         </dependency>
+
          <dependency>
             <groupId>org.gatein.wci</groupId>
             <artifactId>wci-wci</artifactId>
@@ -806,34 +917,34 @@
         <dependency>
             <groupId>org.reflext</groupId>
             <artifactId>reflext.api</artifactId>
-            <version>${version.reflext}</version>
+            <version>${org.reflext.version}</version>
          </dependency>
          <dependency>
             <groupId>org.reflext</groupId>
             <artifactId>reflext.apt</artifactId>
-            <version>${version.reflext}</version>
+            <version>${org.reflext.version}</version>
          </dependency>
          <dependency>
             <groupId>org.reflext</groupId>
             <artifactId>reflext.core</artifactId>
-            <version>${version.reflext}</version>
+            <version>${org.reflext.version}</version>
          </dependency>
          <dependency>
             <groupId>org.reflext</groupId>
             <artifactId>reflext.jlr</artifactId>
-            <version>${version.reflext}</version>
+            <version>${org.reflext.version}</version>
          </dependency>
          <dependency>
             <groupId>org.reflext</groupId>
             <artifactId>reflext.spi</artifactId>
-            <version>${version.reflext}</version>
+            <version>${org.reflext.version}</version>
          </dependency>
 
         <!-- Chromattic -->
         <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.apt</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
             <scope>compile</scope>
             <exclusions>
               <exclusion>
@@ -845,17 +956,17 @@
          <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.api</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
          </dependency>
          <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.spi</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
          </dependency>
          <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.core</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
            <!-- GTNPORTAL-2095: temporary exclusion for missing dependency -->
            <exclusions>
                <exclusion>
@@ -867,17 +978,17 @@
          <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.ext</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
          </dependency>
          <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.common</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
          </dependency>
          <dependency>
             <groupId>org.chromattic</groupId>
             <artifactId>chromattic.metamodel</artifactId>
-            <version>${version.chromattic}</version>
+            <version>${org.chromattic.version}</version>
              <exclusions>
               <exclusion>
                 <groupId>org.chromattic</groupId>
@@ -1014,7 +1125,24 @@
             <artifactId>portletbridge-impl</artifactId>
             <version>${org.jboss.portletbridge.version}</version>
          </dependency>
-
+         <dependency>
+           <groupId>org.jboss.byteman</groupId>
+           <artifactId>byteman</artifactId>
+           <version>${byteman.version}</version>
+           <scope>test</scope>
+         </dependency>
+         <dependency>
+           <groupId>org.jboss.byteman</groupId>
+           <artifactId>byteman-install</artifactId>
+           <version>${byteman.version}</version>
+           <scope>test</scope>
+         </dependency>
+         <dependency>
+           <groupId>org.jboss.byteman</groupId>
+           <artifactId>byteman-bmunit</artifactId>
+           <version>${byteman.version}</version>
+           <scope>test</scope>
+         </dependency>
         <!-- needed for the IBM jdk, should be remove in the future when IBM fixes its jdk (see GTNPORTAL-636) -->
         <dependency>
             <groupId>net.jcip</groupId>
@@ -1061,7 +1189,7 @@
         <dependency>
           <groupId>org.jasig.cas.client</groupId>
           <artifactId>cas-client-core</artifactId>
-          <version>${version.cas.client}</version>
+          <version>${org.jasig.cas.client.version}</version>
         </dependency>
 
         <!-- TODO: Move to gatein-dep -->
@@ -1084,6 +1212,164 @@
           <groupId>org.jboss.marshalling</groupId>
           <artifactId>jboss-marshalling-river</artifactId>
           <version>${org.jboss.marshalling.version}</version>
+        </dependency>
+
+        <!-- Wikbook -->
+        <dependency>
+          <groupId>org.wikbook</groupId>
+          <artifactId>wikbook.docbkxstyle</artifactId>
+          <version>${org.wikbook.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.wikbook</groupId>
+          <artifactId>wikbook.template.core</artifactId>
+          <version>${org.wikbook.version}</version>
+        </dependency>
+                
+        <!-- eXo Social -->
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-common</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-core</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-core</artifactId>
+          <version>${project.version}</version>
+          <classifier>doc-chromattic</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-opensocial</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-service</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-service</artifactId>
+          <version>${project.version}</version>
+          <classifier>doc-jaxrs</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-webui</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-demo-config</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-demo-ear</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-demo-jar</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-demo-rest</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-demo-war</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-docs</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extension-config</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extension-ear</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extension-jar</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extension-war</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extras-benches</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extras-migration</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extras-feedmash</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extras-link-composer-plugin</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extras-widget-rest</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-extras-widget-resources</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-webapp-opensocial</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-webapp-portlet</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-webapp-resources</artifactId>
+          <type>war</type>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-config</artifactId>
+          <version>${project.version}</version>
         </dependency>
 
       </dependencies>
