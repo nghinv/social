@@ -26,6 +26,7 @@
       <groupId>org.gatein</groupId>
       <artifactId>gatein-parent</artifactId>
       <version>1.2.0.Beta01</version>
+      <relativePath/>
    </parent>
 
   <groupId>org.exoplatform.social</groupId>
@@ -59,7 +60,7 @@
     <javax.mail.version>1.4.4</javax.mail.version>
     <javax.jta.version>1.1</javax.jta.version>
 
-    <asm.version>1.5.3</asm.version>
+    <asm.version>3.1</asm.version>
     <antlr.version>2.7.6rc1</antlr.version>
     <bsh.version>2.0b1</bsh.version>
     <caja.version>r4251</caja.version>
@@ -596,81 +597,7 @@
             <artifactId>gatein-management-rest</artifactId>
             <version>${org.gatein.management.version}</version>
          </dependency>
-        <!-- WSRP -->
-        <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-producer-lib</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-consumer</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-jcr-impl</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-integration-api</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-common</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-wsrp1-ws</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-wsrp2-ws</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-wss</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-cxf-integration</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-wss-jboss5</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-wss-jboss7</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.wsrp</groupId>
-            <artifactId>wsrp-catalog</artifactId>
-            <scope>provided</scope>
-            <version>${org.gatein.wsrp.version}</version>
-         </dependency>
 
-        <!-- Needed by WSRP, here so that it can be picked up by module generation build.xml -->
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -831,7 +758,7 @@
         <dependency>
           <groupId>org.gatein.portal</groupId>
           <artifactId>exo.portal.packaging.common</artifactId>
-          <version>${project.version}</version>
+          <version>${org.gatein.portal.version}</version>
         </dependency>
          <dependency>
             <groupId>org.gatein.portal</groupId>
@@ -904,12 +831,12 @@
         <dependency>
             <groupId>org.gatein.web</groupId>
             <artifactId>redirect</artifactId>
-            <version>${project.version}</version>
+            <version>${org.gatein.portal.version}</version>
          </dependency>
          <dependency>
             <groupId>org.gatein.portal.portlet</groupId>
             <artifactId>redirect</artifactId>
-            <version>${project.version}</version>
+            <version>${org.gatein.portal.version}</version>
             <type>war</type>
          </dependency>
 
