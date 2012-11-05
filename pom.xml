@@ -66,6 +66,8 @@
     <caja.version>r4251</caja.version>
     <c3p0.version>0.9.1.2</c3p0.version>
     <cglib.version>2.2</cglib.version>
+
+    <commons.compress.version>1.0</commons.compress.version>
     <commons.beanutils.version>1.8.0</commons.beanutils.version>
     <commons.chain.version>1.0</commons.chain.version>
     <commons.codec.version>1.4</commons.codec.version>
@@ -187,10 +189,13 @@
     <org.apache.ws.commons.version>1.0.1</org.apache.ws.commons.version>
     <org.apache.xmlbeans.version>2.3.0</org.apache.xmlbeans.version>
     <org.ccil.cowan.tagsoup.version>1.2</org.ccil.cowan.tagsoup.version>
-    <org.hibernate.version>4.1.6.Final</org.hibernate.version>
     <org.htmlparser.version>1.6</org.htmlparser.version>
+    
+    <org.hibernate.version>4.1.6.Final</org.hibernate.version>
+    <org.hibernate-persistence.version>1.0.2.GA</org.hibernate-persistence.version>
     <org.hibernate.common.version>4.0.1.Final</org.hibernate.common.version>
     <org.hibernate.javax.persistence.version>1.0.1.Final</org.hibernate.javax.persistence.version>
+    
     <org.hsqldb.version>2.0.0</org.hsqldb.version>
     <org.infinispan.version>5.1.7.Final</org.infinispan.version>
     <org.jasig.cas.client.version>3.2.1</org.jasig.cas.client.version>
