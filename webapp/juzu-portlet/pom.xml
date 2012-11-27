@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
       <artifactId>exo.kernel.container</artifactId>
-      <version>2.3.4-GA</version>
+      <version>${org.exoplatform.kernel.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
