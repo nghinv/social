@@ -68,6 +68,7 @@ var UIComposer = {
       }
     });
 
+    $('#UIComposer').find('.BlastShare').after($('<div style="cursor: pointer; border:solid 1px red; width: 15px; height: 15px;"id="test"> </div>'));
     //
     $('textarea#'+UIComposer.textareaId).exoMentions({
         onDataRequest:function (mode, query, callback) {
@@ -81,6 +82,7 @@ var UIComposer = {
         },
         idAction : 'ShareButton',
         actionLink : 'AttachButton',
+        actionMention : 'test',
         elasticStyle : {
           maxHeight : '38px',
           minHeight : '24px'

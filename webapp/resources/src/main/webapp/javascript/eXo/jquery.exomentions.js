@@ -172,6 +172,7 @@
     var inputBuffer = [];
     var currentDataQuery = '';
     var cursor = '<div class="cursorText"></div>&nbsp;';
+    var currentSelection = {elm: null, offset : 0};
     // action add link
     var ActionLink = {
       isRun : false,
@@ -279,7 +280,7 @@
       elmInputBox.val(updatedMessageText);
 
       initClickMention();
-      setCaratPosition(elmInputBox);
+      setCaretPosition(elmInputBox);
 
     }
 
@@ -290,6 +291,7 @@
     }
 
     function insertCursorText(value, index, add) {
+      value = $.trim(value);
       var cursor_ = ' ' + ((add && add === true) ? (settings.triggerChar + cursor) : cursor);
       var val = (index == 0) ? ($.trim(cursor_) + value) :
                  ((index < 0) ? (value + cursor_) : 
@@ -319,7 +321,7 @@
             initClickMention();
             e.stopPropagation();
             autoSetKeyCode(elmInputBox);
-            setCaratPosition(elmInputBox);
+            setCaretPosition(elmInputBox);
           });
           $(item).on('click', function() {
             var selection = getSelection();
@@ -350,7 +352,7 @@
       return selection;
     }
 
-    function setCaratPosition(inputField) {
+    function setCaretPosition(inputField) {
       if (inputField) {
         var cursorText = inputField.find('.cursorText');
         if (inputField.val().length != 0) {
@@ -409,7 +411,7 @@
         if (nt.length < text.length) {
           after = after.substr(0, info.from) + $('<div/>').html(text).text() + ' ' + cursor + after.substr(info.to);
           elmInputBox.val(after);
-          setCaratPosition(elmInputBox);
+          setCaretPosition(elmInputBox);
           autoAddLink(text);
         }
         elmInputBox.css('cursor', 'text');
@@ -422,7 +424,7 @@
 
     function onInputBoxClick(e) {
       if(elmAutocompleteList.find('li').length > 0) {
-        setCaratPosition(elmInputBox);
+        setCaretPosition(elmInputBox);
         elmAutocompleteList.show();
       } else {
         resetBuffer();
@@ -444,6 +446,9 @@
         }
         value = value.replace(typed, reBy+'<div class="cursorText"></div>');
         elmInputBox.val(value);
+      } else {
+        log('saveCaretPosition....');
+        saveCaretPosition();
       }
       saveCacheData();
       if (getInputBoxValue().length === 0) {
@@ -455,7 +460,7 @@
       var isBlockMenu = (elmAutocompleteList.css('display') === 'block');
       updateValues();
       updateMentionsCollection();
-
+      
       inputBuffer = utils.replaceFirst(inputBuffer.join(''), ' ').split('');
       var triggerCharIndex = _.lastIndexOf(inputBuffer, settings.triggerChar);
       if (triggerCharIndex === 0) {
@@ -545,7 +550,7 @@
                 after = insertCursorText(after, indexChanged, true);
                 elmInputBox.val(after);
                 autoSetKeyCode(elmInputBox);
-                setCaratPosition(elmInputBox);
+                setCaretPosition(elmInputBox);
               }
             } else if (delta == 1) {
               var indexChanged = utils.getCursorIndexOfText(before, after);
@@ -692,27 +697,12 @@
     }
     
     function autoSetKeyCode(elm) {
-      try {
-        if (utils.isIE && utils.brVersion < 9) {
-          resetBuffer();
-          inputBuffer[0] = settings.triggerChar;
+      disabledPlaceholder();
+      resetBuffer();
+      inputBuffer[0] = settings.triggerChar;
 
-          //
-          onInputBoxInput();
-        } else {
-          var e = jQuery.Event("keypress", {
-            keyCode : KEY.MENTION,
-            charCode : settings.triggerChar
-          });
-          var e1 = jQuery.Event("keydown", {
-            keyCode : KEY.MENTION,
-            charCode : settings.triggerChar
-          });
-          elm.triggerHandler(e);
-          elm.trigger(e1);
-          inputBuffer[0] = settings.triggerChar;
-        }
-      } catch (err) {}
+      //
+      onInputBoxInput();
     }
 
     function hideAutoComplete(isClear) {
@@ -964,6 +954,77 @@
         action.attr('onclick', action.data('actionLink').action);        
       }
     }
+
+// keep committed id: e7afc555114f27e20acc343b35c56e609958c534
+    function getCaretPosition() {
+      if(currentSelection.elm === null) {
+        return -1;
+      } else if(typeof currentSelection.elm === 'object') {
+        if(currentSelection.elm === elmInputBox[0]) {
+          return currentSelection.offset;
+        }
+        var tem = $('<div/>');
+        var childs = elmInputBox[0].childNodes;
+        for (var i = 0; i < childs.length; ++i) {
+          var it = childs[i];
+          if(it === currentSelection.elm) {
+            break;
+          } else {
+            tem.append($(it).clone());
+          }
+        }
+        var i = tem.html().length + currentSelection.offset;
+        
+        var h = elmInputBox.html();
+        log('h:' +h);
+        log('s:' + h.substring(0, i));
+        log('t:' +tem.html());
+       
+        return i;
+      } else {
+        var text = currentSelection.elm;
+        var index = val.indexOf(text) + currentSelection.offset;
+        return (index > 0) ? index : 0;
+      }
+    }
+    
+    function saveCaretPosition(elm, offset) {
+      if(elm && typeof elm === 'object' && offset && typeof offset === 'number'){
+        currentSelection.elm = selectNode;
+        currentSelection.offset = offset;
+      } else {
+        var select = getSelection();
+        window.select = select;
+        var idx = select.baseOffset;
+        var selectNode = select.anchorNode;
+        log(window.select.anchorNode)
+        if(selectNode && (selectNode === elmInputBox[0] || selectNode.parentNode === elmInputBox[0])) {
+          currentSelection.elm = selectNode;
+          currentSelection.offset = select.baseOffset;
+        }
+      }
+
+      window.currentSelection = currentSelection;
+      log((currentSelection.elm) ? ((typeof currentSelection.elm) + ' : ' + $(currentSelection.elm).text()) : 'null');
+      log(currentSelection.offset);
+    }
+
+    function getCaretPositionIE(inputField) {
+      if($.browser.msie) {
+        var selection= getSelection();
+        var range = selection.createRange().duplicate();
+        var val = inputField.val();
+        range.moveEnd("character", val.length);
+        var s = (range.text == "" ? val.length:val.lastIndexOf(range.text));
+        range = selection.createRange().duplicate();
+        range.moveStart("character", -val.length);
+        var e = range.text.length;
+        log('s: ' + s + ' e: ' + e);
+      } else {
+       // log('s: ' + t.selectionStart + ' e: ' + t.selectionEnd);
+      }
+    }
+    
     // Public methods
     return {
       init : function(domTarget) {
@@ -1015,6 +1076,55 @@
             enabledPlaceholder();
           }
         }
+        
+        // action mention tuvd
+        if (settings.actionMention && settings.actionMention.length > 0) {
+          var action = null;
+          if(typeof settings.actionMention ==='string') {
+            action = $('#'+settings.actionMention)
+          } else if(typeof settings.actionMention === 'object') {
+            action = $(settings.actionMention);
+          }
+          if(action && action.length > 0) {
+            action.on('click', function(e) {
+              e.stopPropagation();
+              var val = elmInputBox.value();
+
+              if(val.indexOf('class="cursorText"') < 0) {
+                
+                /**
+                 * case 1: 
+                 *  + Selected element is not menstion-input
+                 *  + Browser is can not support HTML5.
+                 *  + Value of input is empty.
+                 *  ==> Add key @ last of content and auto show suggestion list.
+                 */
+                var caretIndex = getCaretPosition();
+                log('caretIndex: '  + caretIndex)
+                if(val.length == 0 || utils.brVersion < 9 || caretIndex < 0) {
+                  log('ko thuoc input-box....');
+                  val = insertCursorText(val, -1, true);
+                } else {
+                  /**
+                   * case 2: 
+                   *  + Selected element is menstion-input
+                   *  + Browser can support HTML5.
+                   *  ==> Add key @ has posision is index of caret text and auto show suggestion list.
+                   */
+                  log('thuoc input-box....');
+                  
+                  val = insertCursorText(val, caretIndex, true);
+                }
+                
+                elmInputBox.val(val);
+                setCaretPosition(elmInputBox);
+                autoSetKeyCode(elmInputBox);
+              }
+
+            });
+          }
+        }
+
       },
 
       val : function(callback) {
