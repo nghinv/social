@@ -172,6 +172,7 @@
     var inputBuffer = [];
     var currentDataQuery = '';
     var cursor = '<div class="cursorText"></div>&nbsp;';
+    var currentSelection = {elm: null, offset : 0};
     // action add link
     var ActionLink = {
       isRun : false,
@@ -279,7 +280,7 @@
       elmInputBox.val(updatedMessageText);
 
       initClickMention();
-      setCaratPosition(elmInputBox);
+      setCaretPosition(elmInputBox);
 
     }
 
@@ -290,6 +291,7 @@
     }
 
     function insertCursorText(value, index, add) {
+      value = $.trim(value);
       var cursor_ = ' ' + ((add && add === true) ? (settings.triggerChar + cursor) : cursor);
       var val = (index == 0) ? ($.trim(cursor_) + value) :
                  ((index < 0) ? (value + cursor_) : 
@@ -319,20 +321,10 @@
             initClickMention();
             e.stopPropagation();
             autoSetKeyCode(elmInputBox);
-            setCaratPosition(elmInputBox);
+            setCaretPosition(elmInputBox);
           });
           $(item).on('click', function() {
-            var selection = getSelection();
-            if (selection) {
-              try {
-                var range = document.createRange();
-                range.selectNodeContents(this);
-                range.selectNode(this);
-
-                selection.removeAllRanges();
-                selection.addRange(range);
-              } catch (err) {}
-            }
+            setCaretSelection(this);
           });
         });
       }
@@ -350,7 +342,20 @@
       return selection;
     }
 
-    function setCaratPosition(inputField) {
+    function setCaretSelection(elm) {
+      try {
+        elm.focus();
+        var range = document.createRange();
+        range.selectNode(elm);
+        range.selectNodeContents(elm);
+
+        var selection = getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } catch (err) {log(err); }
+    }
+
+    function setCaretPosition_backup(inputField) {
       if (inputField) {
         var cursorText = inputField.find('.cursorText');
         if (inputField.val().length != 0) {
@@ -381,6 +386,52 @@
       }
     }
     
+    function setCaretPosition(inputField) {
+      if (inputField) {
+        if(utils.isFirefox)inputField.focus();
+        var cursorText = inputField.find('.cursorText');
+        if (cursorText.length > 0) {
+          cursorText.attr('contenteditable', 'true').css({
+            'display' : 'inline',
+            'height' : '14px'
+          }).html('&nbsp;&nbsp;&nbsp;');
+
+          inputField.find('span.none').remove();
+          var tx = document.createElement('span');
+          $(tx).insertAfter(cursorText);
+          $(tx).addClass('none');
+          if(utils.isIE) {
+            //setCaretPositionIE(inputField, tx)
+            inputField.trigger('keydown');
+          } else {
+          }
+          setCaretSelection(cursorText[0]);
+          cursorText.remove();
+          saveCaretPosition(tx, 0);
+          updateValues();
+        }
+      }
+    }
+    
+    function setCaretPositionIE (inputField, tx) {
+
+      // IE Support
+        var selection = getSelection();
+        // Set focus on the element
+        inputField.focus ();
+        var val = inputField.value();
+        // Create empty selection range
+        var oSel = document.selection.createRange ();
+   
+        // Move selection start and end to 0 position
+        oSel.moveStart ('character', -1 * val.length);
+   
+        // Move selection start and end to desired position
+        oSel.moveStart ('character', val.indexOf(tx.outerHTML));
+        oSel.moveEnd ('character', 0);
+        oSel.select ();
+    }
+
     function getInputBoxFullValue() {
       return $.trim(elmInputBox.value());
     }
@@ -409,7 +460,7 @@
         if (nt.length < text.length) {
           after = after.substr(0, info.from) + $('<div/>').html(text).text() + ' ' + cursor + after.substr(info.to);
           elmInputBox.val(after);
-          setCaratPosition(elmInputBox);
+          setCaretPosition(elmInputBox);
           autoAddLink(text);
         }
         elmInputBox.css('cursor', 'text');
@@ -422,10 +473,12 @@
 
     function onInputBoxClick(e) {
       if(elmAutocompleteList.find('li').length > 0) {
-        setCaratPosition(elmInputBox);
+        setCaretPosition(elmInputBox);
         elmAutocompleteList.show();
       } else {
+        e.stopPropagation();
         resetBuffer();
+        saveCaretPosition();
       }
     }
 
@@ -455,7 +508,7 @@
       var isBlockMenu = (elmAutocompleteList.css('display') === 'block');
       updateValues();
       updateMentionsCollection();
-
+      
       inputBuffer = utils.replaceFirst(inputBuffer.join(''), ' ').split('');
       var triggerCharIndex = _.lastIndexOf(inputBuffer, settings.triggerChar);
       if (triggerCharIndex === 0) {
@@ -525,7 +578,7 @@
         inputBuffer.splice((inputBuffer.length - 1), 1);
         if (utils.isIE) {
           if (inputBuffer.length > 1 || (inputBuffer.length == 1 && utils.brVersion < 9)) {
-            onInputBoxInput();
+            onInputBoxInput(e);
           } else {
             hideAutoComplete();
           }
@@ -545,7 +598,7 @@
                 after = insertCursorText(after, indexChanged, true);
                 elmInputBox.val(after);
                 autoSetKeyCode(elmInputBox);
-                setCaratPosition(elmInputBox);
+                setCaretPosition(elmInputBox);
               }
             } else if (delta == 1) {
               var indexChanged = utils.getCursorIndexOfText(before, after);
@@ -638,6 +691,9 @@
     }
 
     function onInputBoxKeyUp(e) {
+      //
+      saveCaretPosition();
+      
       backspceBroswerFix(e);
       
       checkAutoAddLink(e);
@@ -647,7 +703,6 @@
       } else {
         disabledPlaceholder();
       }
-      //
     }
     
     function backspceBroswerFix(e) {
@@ -692,27 +747,12 @@
     }
     
     function autoSetKeyCode(elm) {
-      try {
-        if (utils.isIE && utils.brVersion < 9) {
-          resetBuffer();
-          inputBuffer[0] = settings.triggerChar;
+      disabledPlaceholder();
+      resetBuffer();
+      inputBuffer[0] = settings.triggerChar;
 
-          //
-          onInputBoxInput();
-        } else {
-          var e = jQuery.Event("keypress", {
-            keyCode : KEY.MENTION,
-            charCode : settings.triggerChar
-          });
-          var e1 = jQuery.Event("keydown", {
-            keyCode : KEY.MENTION,
-            charCode : settings.triggerChar
-          });
-          elm.triggerHandler(e);
-          elm.trigger(e1);
-          inputBuffer[0] = settings.triggerChar;
-        }
-      } catch (err) {}
+      //
+      onInputBoxInput();
     }
 
     function hideAutoComplete(isClear) {
@@ -861,7 +901,7 @@
 
     function clearCaseSearch() {
       elmInputBox.parent().stop().animate({
-        'cursor' : 'none'
+        'cursor' : 'default'
       }, settings.cacheResult.live, function() {
         $(this).data("CaseSearch", {});
       });
@@ -947,7 +987,7 @@
     
     function enabledPlaceholder() {
       var parent = elmInputBox.parent();
-      parent.find('div.placeholder:first').show();
+      parent.find('div.placeholder:first').show().css('top', '5px');;
       
       var isLinked = ($('#LinkTitle').length > 0);
       var action = $('#' + settings.idAction);
@@ -957,13 +997,83 @@
     }
     
     function disabledPlaceholder() {
-      elmInputBox.parent().find('div.placeholder:first').hide();
+      elmInputBox.parent().find('div.placeholder:first').hide().css('top', '-100px');
       var action = $('#' + settings.idAction);
       if (action.length > 0 && action.attr('disabled') === 'disabled') {
         action.removeAttr('disabled').removeClass('DisableButton');
         action.attr('onclick', action.data('actionLink').action);        
       }
     }
+
+// keep committed id: e7afc555114f27e20acc343b35c56e609958c534
+    function getCaretPosition() {
+      if(currentSelection.elm === null) {
+        return (currentSelection.offset === null) ? -1 : currentSelection.offset;
+      } else if(typeof currentSelection.elm === 'object') {
+        if(currentSelection.elm === elmInputBox[0]) {
+          return currentSelection.offset;
+        }
+        var tem = $('<div/>');
+        var childs = elmInputBox[0].childNodes;
+        for (var i = 0; i < childs.length; ++i) {
+          var it = childs[i];
+          if(it === currentSelection.elm) {
+            break;
+          } else {
+            tem.append($(it).clone());
+          }
+        }
+        var i = tem.html().length + currentSelection.offset;
+        return i;
+      }
+      return -1;
+    }
+    
+    function saveCaretPosition(elm, offset) {
+      if(elm && (typeof offset) === 'number'){
+        currentSelection.elm = elm;
+        currentSelection.offset = offset;
+      } else {
+        var select = getSelection();
+        var idx = select.baseOffset;
+        var selectNode = select.anchorNode;
+        if(selectNode && (selectNode === elmInputBox[0] || selectNode.parentNode === elmInputBox[0])) {
+          currentSelection.elm = selectNode;
+          currentSelection.offset = (select.baseOffset) ? select.baseOffset : ((select.anchorOffset) ? select.anchorOffset : 0);
+        }
+      }
+      saveCaretPositionIE();
+    }
+
+    function saveCaretPositionIE() {
+      try {
+        if($.browser.msie) {
+          var selection= getSelection();
+          var range = selection.createRange().duplicate();
+          var val = elmInputBox.value();
+          range.moveEnd("character", val.length);
+          var s = (range.text == "" ? val.length : val.lastIndexOf(range.text));
+          range = selection.createRange().duplicate();
+          range.moveStart("character", -val.length);
+          
+          var text = range.htmlText;
+          if(text != null) {
+            text = String(text).replace(/ id\=/, ' id_=').replace(/jQuery/g, 'jq');
+            if(text.indexOf('</') > 0) {
+              var jEml = $(text);
+              text = (jEml.length > 0) ? jEml.find('.ReplaceTextArea').html() : text;
+            }
+            currentSelection.elm = null;
+            if(text != null) {
+              currentSelection.offset = text.length;
+            } else {
+              currentSelection.offset = -1;
+            }
+          }
+        }
+      } catch (err) {log(err); }
+    }
+    
     // Public methods
     return {
       init : function(domTarget) {
@@ -1015,6 +1125,51 @@
             enabledPlaceholder();
           }
         }
+        
+        // action mention tuvd
+        if (settings.actionMention && settings.actionMention.length > 0) {
+          var action = null;
+          if(typeof settings.actionMention ==='string') {
+            action = $('#'+settings.actionMention)
+          } else if(typeof settings.actionMention === 'object') {
+            action = $(settings.actionMention);
+          }
+          if(action && action.length > 0) {
+            action.on('click', function(e) {
+              e.stopPropagation();
+
+              var val = elmInputBox.value();
+              if(val.indexOf('class="cursorText"') < 0) {
+                
+                /**
+                 * case 1: 
+                 *  + Selected element is not menstion-input
+                 *  + Browser is can not support HTML5.
+                 *  + Value of input is empty.
+                 *  ==> Add key @ last of content and auto show suggestion list.
+                 */
+                var caretIndex = getCaretPosition();
+                log('caretIndex: '  + caretIndex)
+                if(val.length == 0 || utils.brVersion < 7 || caretIndex == undefined || caretIndex < 0) {
+                  val = insertCursorText(val.replace(/&nbsp;/g, ' '), -1, true).replace(/&nbsp;/, '');
+                } else {
+                /**
+                 * case 2: 
+                 *  + Selected element is menstion-input
+                 *  + Browser can support HTML5.
+                 *  ==> Add key @ has posision is index of caret text and auto show suggestion list.
+                 */
+                  val = insertCursorText(val, caretIndex, true);
+                }
+                elmInputBox.val(val);
+                autoSetKeyCode(elmInputBox);
+                setCaretPosition(elmInputBox);
+              }
+
+            });
+          }
+        }
+
       },
 
       val : function(callback) {

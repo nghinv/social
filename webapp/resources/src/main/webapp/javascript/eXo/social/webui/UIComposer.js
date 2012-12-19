@@ -68,6 +68,9 @@ var UIComposer = {
       }
     });
 
+    $('#UIComposer').find('.AttachMents').append(
+        $('<a style="cursor: pointer; border:1px solid #E1E1E1; width: 25px; height: 15px;" id="test">&nbsp;@&nbsp;</a>')
+     );
     //
     $('textarea#'+UIComposer.textareaId).exoMentions({
         onDataRequest:function (mode, query, callback) {
@@ -81,6 +84,7 @@ var UIComposer = {
         },
         idAction : 'ShareButton',
         actionLink : 'AttachButton',
+        actionMention : 'test',
         elasticStyle : {
           maxHeight : '38px',
           minHeight : '24px'
