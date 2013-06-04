@@ -64,7 +64,7 @@ public class CachedRelationshipStorageTestCase extends AbstractCoreTest {
     super.tearDown();
   }
 
-  @MaxQueryNumber(150)
+  @MaxQueryNumber(152)
   public void testSaveRelationship() throws Exception {
 
     Identity i1 = new Identity("p", "i1");
@@ -82,7 +82,7 @@ public class CachedRelationshipStorageTestCase extends AbstractCoreTest {
 
   }
 
-  @MaxQueryNumber(200)
+  @MaxQueryNumber(218)
   public void testRemoveRelationship() throws Exception {
 
     Identity i1 = new Identity("p", "i1");
@@ -127,7 +127,7 @@ public class CachedRelationshipStorageTestCase extends AbstractCoreTest {
     
   }
 
-  @MaxQueryNumber(150)
+  @MaxQueryNumber(154)
   public void testName() throws Exception {
 
     Identity i1 = new Identity("p", "i1");
@@ -150,7 +150,7 @@ public class CachedRelationshipStorageTestCase extends AbstractCoreTest {
 
   }
   
-  @MaxQueryNumber(200)
+  @MaxQueryNumber(218)
   public void testGetRelationshipIdentity() throws Exception {
 
     Identity i1 = new Identity("p", "i1");
