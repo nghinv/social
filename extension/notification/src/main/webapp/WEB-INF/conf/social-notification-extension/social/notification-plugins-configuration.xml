@@ -132,6 +132,58 @@
                 <field name="templatePath">
                   <string>war:/notification/templates/LikePlugin.gtmpl</string>
                 </field>
+                <field name="templatePathChildren">
+                  <map type="java.util.HashMap">
+                    <entry>
+                      <key><string>DEFAULT_ACTIVITY</string></key>
+                      <value><string>war:/notification/templates/activities/DefaultActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>USER_PROFILE_ACTIVITY</string></key>
+                      <value><string>war:/notification/templates/activities/UserProfileActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>USER_ACTIVITIES_FOR_RELATIONSHIP</string></key>
+                      <value><string>war:/notification/templates/activities/RelationshipActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>SPACE_ACTIVITY</string></key>
+                      <value><string>war:/notification/templates/activities/SpaceActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>LINK_ACTIVITY</string></key>
+                      <value><string>war:/notification/templates/activities/LinkActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>files:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/FileSpacesActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>contents:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/ContentsActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>cs-calendar:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/CalendarActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>ks-forum:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/ForumActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>ks-answer:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/AnswerActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>ks-poll:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/PollActivity.gtmpl</string></value>
+                    </entry>
+                    <entry>
+                      <key><string>ks-wiki:spaces</string></key>
+                      <value><string>war:/notification/templates/activities/WikiActivity.gtmpl</string></value>
+                    </entry>
+                  </map>
+                </field>
               </object>
             </field>
           </object>
