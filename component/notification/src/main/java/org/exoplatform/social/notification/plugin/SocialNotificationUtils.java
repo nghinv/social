@@ -124,19 +124,16 @@ public class SocialNotificationUtils {
       if (activity != null) {
         String title = activity.getTitle();
         // removes a href link from title. Just for digest building case.
-        title = title.replaceAll(A_HREF_TAG_REGEX, ""); 
-        if (!title.endsWith(DOT_STRING)) {
-          title = title + DOT_STRING; 
-        }
-        templateContext.put("ACTIVITY", SocialNotificationUtils.buildRedirecActivityUrl(typeActivityDisplay, activity.getId(), title));
+        title = title.replaceAll(A_HREF_TAG_REGEX, "");
+        templateContext.put("ACTIVITY", SocialNotificationUtils.buildRedirecUrl(typeActivityDisplay, activity.getId(), title));
       } else {
         templateContext.put("SPACE", SocialNotificationUtils.buildRedirecUrl(typeSpaceDisplay, space.getId(), space.getDisplayName()));
       }
-      
-      String[] keys = {"USER", "USER_LIST", "LAST3_USERS"};
+
+      String[] keys = { "USER", "USER_LIST", "LAST3_USERS" };
       String key = "";
       StringBuilder value = new StringBuilder();
-      
+
       for (int i = 0; i < count && i < 3; i++) {
         Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, values.get(i), true);
         if (i > 1 && count == 3) {
@@ -150,9 +147,9 @@ public class SocialNotificationUtils {
         }
       }
       templateContext.put(key, value.toString());
-      if(count > 3) {
+      if (count > 3) {
         if (activity != null) {
-          templateContext.put("COUNT", SocialNotificationUtils.buildRedirecActivityUrl(typeActivityDisplay, activity.getId(), String.valueOf((count - 3))));
+          templateContext.put("COUNT", SocialNotificationUtils.buildRedirecUrl(typeActivityDisplay, activity.getId(), String.valueOf((count - 3))));
         } else {
           templateContext.put("COUNT", SocialNotificationUtils.buildRedirecUrl(typeSpaceDisplay, space.getId(), String.valueOf((count - 3))));
         }
@@ -162,7 +159,7 @@ public class SocialNotificationUtils {
       sb.append(digester);
       sb.append("</li>");
     }
-    
+
     return sb.toString();
   }
 
@@ -244,12 +241,7 @@ public class SocialNotificationUtils {
   
   public static String buildRedirecUrl(String type, String id, String name) {
     String link = LinkProviderUtils.getRedirectUrl(type, id);
-    return "<a target=\"_blank\" style=\"text-decoration: none; font-weight: bold; color: #2f5e92; font-family: 'HelveticaNeue Bold', Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px;\" href=\""+ link + "\">" + name + "</a>";
-  }
-  
-  public static String buildRedirecActivityUrl(String type, String id, String activityTitle) {
-    String link = LinkProviderUtils.getRedirectUrl(type, id);
-    return "<a target=\"_blank\" style=\"text-decoration: none; color: #2f5e92; font-family: 'HelveticaNeue Bold', Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px;\" href=\""+ link + "\">" + activityTitle + "</a>";
+    return "<a target=\"_blank\" style=\"text-decoration: none; font-weight: bold; color: #2f5e92; font-family: 'HelveticaNeue Bold', Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px;\" href=\""+ link + "\"><strong>" + name + "</strong></a>";
   }
   
   public static void addFooterAndFirstName(String remoteId, TemplateContext templateContext) {
