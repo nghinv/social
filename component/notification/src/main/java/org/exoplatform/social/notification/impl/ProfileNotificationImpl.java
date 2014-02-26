@@ -19,8 +19,6 @@ package org.exoplatform.social.notification.impl;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.NotificationKey;
 import org.exoplatform.commons.notification.impl.NotificationContextImpl;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
@@ -29,8 +27,6 @@ import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
 
 public class ProfileNotificationImpl extends ProfileListenerPlugin {
   
-  private static final Log LOG = ExoLogger.getLogger(ProfileNotificationImpl.class);
-
   @Override
   public void avatarUpdated(ProfileLifeCycleEvent event) {
   }

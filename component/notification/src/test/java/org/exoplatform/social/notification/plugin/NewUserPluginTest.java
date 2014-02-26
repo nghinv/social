@@ -112,7 +112,8 @@ public class NewUserPluginTest extends AbstractPluginTest {
 
     list.get(0).setTo(rootIdentity.getRemoteId());
     
-    ctx.setNotificationInfos(list);
+    dataStorage.addAll(list);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     Writer writer = new StringWriter();
     getPlugin().buildDigest(ctx, writer);
     assertDigest(writer, "Ghost gtn, Raul gtn, Paul gtn have joined eXo.");

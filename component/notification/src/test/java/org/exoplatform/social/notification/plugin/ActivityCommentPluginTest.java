@@ -219,7 +219,10 @@ public class ActivityCommentPluginTest extends AbstractPluginTest {
     
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     toRoot.set(0, toRoot.get(0).setTo(rootIdentity.getRemoteId()));
-    ctx.setNotificationInfos(toRoot);
+    dataStorage.addAll(toRoot);
+    
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
+    
     Writer writer = new StringWriter();
     getPlugin().buildDigest(ctx, writer);
     assertDigest(writer, "Demo gtn, John Anthony have commented on your activity: my activity's title post today.");

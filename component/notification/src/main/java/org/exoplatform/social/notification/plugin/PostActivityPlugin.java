@@ -16,7 +16,6 @@
  */
 package org.exoplatform.social.notification.plugin;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,9 +24,13 @@ import java.util.Map;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.MessageInfo;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
+import org.exoplatform.commons.api.notification.node.NTFInforkey;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationPlugin;
+import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
+import org.exoplatform.commons.api.notification.service.storage.NotificationDataStorage;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -68,12 +71,12 @@ public class PostActivityPlugin extends AbstractNotificationPlugin {
   @Override
   public MessageInfo makeMessage(NotificationContext ctx) {
     MessageInfo messageInfo = new MessageInfo();
-    
+    String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+    String language = NotificationPluginUtils.getLanguage(toUser);
     NotificationInfo notification = ctx.getNotificationInfo();
-    
-    String language = getLanguage(notification);
-    TemplateContext templateContext = new TemplateContext(notification.getKey().getId(), language);
-    SocialNotificationUtils.addFooterAndFirstName(notification.getTo(), templateContext);
+    TemplateContext templateContext = new TemplateContext(getId(), language);
+
+    SocialNotificationUtils.addFooterAndFirstName(toUser, templateContext);
 
     String activityId = notification.getValueOwnerParameter(SocialNotificationUtils.ACTIVITY_ID.getKey());
     ExoSocialActivity activity = Utils.getActivityManager().getActivity(activityId);
@@ -95,20 +98,21 @@ public class PostActivityPlugin extends AbstractNotificationPlugin {
 
   @Override
   public boolean makeDigest(NotificationContext ctx, Writer writer) {
-    List<NotificationInfo> notifications = ctx.getNotificationInfos();
-    NotificationInfo first = notifications.get(0);
-    String sendToUser = first.getTo();
-    String language = getLanguage(first);
-    
-    TemplateContext templateContext = new TemplateContext(first.getKey().getId(), language);
-    Map<String, List<String>> receiverMap = new LinkedHashMap<String, List<String>>();
-    
     try {
-      for (NotificationInfo message : notifications) {
+      NotificationDataStorage dataStorage = CommonsUtils.getService(NotificationDataStorage.class);
+      List<NTFInforkey> infoKeys = ctx.getNotificationInfos();
+
+      String language = NotificationPluginUtils.getLanguage(ctx.value(NotificationPluginUtils.SENDTO));
+      TemplateContext templateContext = new TemplateContext(getId(), language);
+      Map<String, List<String>> receiverMap = new LinkedHashMap<String, List<String>>();
+
+      String sendToUser = ctx.value(NotificationPluginUtils.SENDTO);
+      for (NTFInforkey infoKey : infoKeys) {
+        NotificationInfo message = dataStorage.get(infoKey.getUUID());
         SocialNotificationUtils.processInforSendTo(receiverMap, sendToUser, message.getValueOwnerParameter(SocialNotificationUtils.POSTER.getKey()));
       }
       writer.append(SocialNotificationUtils.getMessageByIds(receiverMap, templateContext, "user"));
-    } catch (IOException e) {
+    } catch (Exception e) {
       ctx.setException(e);
       return false;
     }

@@ -32,6 +32,7 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.relationship.model.Relationship;
 import org.exoplatform.social.core.space.impl.DefaultSpaceApplicationHandler;
 import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.notification.mock.MockNotificationDataStorage;
 import org.exoplatform.social.notification.plugin.ActivityCommentPlugin;
 import org.exoplatform.social.notification.plugin.ActivityMentionPlugin;
 import org.exoplatform.social.notification.plugin.LikePlugin;
@@ -51,6 +52,7 @@ import org.exoplatform.social.notification.plugin.SpaceInvitationPlugin;
 public abstract class AbstractPluginTest extends AbstractCoreTest {
   
   protected UserSettingService userSettingService;
+  protected MockNotificationDataStorage dataStorage;
   
   protected List<ExoSocialActivity> tearDownActivityList;
   protected List<Space>  tearDownSpaceList;
@@ -63,7 +65,7 @@ public abstract class AbstractPluginTest extends AbstractCoreTest {
   protected void setUp() throws Exception {
     super.setUp();
     userSettingService = Utils.getService(UserSettingService.class);
-    
+    dataStorage = getService(MockNotificationDataStorage.class);
     
     rootIdentity = identityManager.getOrCreateIdentity("organization", "root", true);
     johnIdentity = identityManager.getOrCreateIdentity("organization", "john", true);
@@ -109,6 +111,8 @@ public abstract class AbstractPluginTest extends AbstractCoreTest {
     }
     
     notificationService.clearAll();
+    
+    dataStorage.clear();
     //
     turnON(getPlugin());
     turnFeatureOn();

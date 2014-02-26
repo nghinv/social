@@ -144,7 +144,8 @@ public class RelationshipReceivedRequestPluginTest extends AbstractPluginTest {
     
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You've received a connection request from Demo gtn, Mary Kelly.");
@@ -166,7 +167,8 @@ public class RelationshipReceivedRequestPluginTest extends AbstractPluginTest {
     
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You've received a connection request from Demo gtn, Mary Kelly.");
@@ -201,7 +203,8 @@ public class RelationshipReceivedRequestPluginTest extends AbstractPluginTest {
     
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You've received a connection request from Demo gtn, Mary Kelly.");
@@ -245,7 +248,8 @@ public class RelationshipReceivedRequestPluginTest extends AbstractPluginTest {
     
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You've received a connection request from John Anthony, Mary Kelly.");

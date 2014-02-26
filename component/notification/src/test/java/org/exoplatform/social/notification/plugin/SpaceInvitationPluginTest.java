@@ -147,7 +147,8 @@ public class SpaceInvitationPluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You have been asked to joing the following spaces: my space 1, my space 2.");
@@ -196,7 +197,8 @@ public class SpaceInvitationPluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You have been asked to joing the following spaces: my space 2, my space 3.");
@@ -220,7 +222,8 @@ public class SpaceInvitationPluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You have been asked to joing the following spaces: my space 1, my space 2.");
@@ -263,7 +266,8 @@ public class SpaceInvitationPluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "You have been asked to joing the following spaces: my space 2, my space 3.");

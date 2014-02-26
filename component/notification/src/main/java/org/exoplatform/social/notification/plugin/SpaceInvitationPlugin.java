@@ -16,7 +16,6 @@
  */
 package org.exoplatform.social.notification.plugin;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,9 +24,13 @@ import java.util.Map;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.MessageInfo;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
+import org.exoplatform.commons.api.notification.node.NTFInforkey;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationPlugin;
+import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
+import org.exoplatform.commons.api.notification.service.storage.NotificationDataStorage;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.notification.LinkProviderUtils;
@@ -59,12 +62,12 @@ public class SpaceInvitationPlugin extends AbstractNotificationPlugin {
   @Override
   public MessageInfo makeMessage(NotificationContext ctx) {
     MessageInfo messageInfo = new MessageInfo();
-    
+    String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+    String language = NotificationPluginUtils.getLanguage(toUser);
     NotificationInfo notification = ctx.getNotificationInfo();
-    
-    String language = getLanguage(notification);
-    TemplateContext templateContext = new TemplateContext(notification.getKey().getId(), language);
-    SocialNotificationUtils.addFooterAndFirstName(notification.getTo(), templateContext);
+    TemplateContext templateContext = new TemplateContext(getId(), language);
+
+    SocialNotificationUtils.addFooterAndFirstName(toUser, templateContext);
 
     String spaceId = notification.getValueOwnerParameter(SocialNotificationUtils.SPACE_ID.getKey());
     Space space = Utils.getSpaceService().getSpaceById(spaceId);
@@ -74,8 +77,8 @@ public class SpaceInvitationPlugin extends AbstractNotificationPlugin {
     String subject = TemplateUtils.processSubject(templateContext);
     
     templateContext.put("SPACE_AVATAR", LinkProviderUtils.getSpaceAvatarUrl(space));
-    templateContext.put("ACCEPT_SPACE_INVITATION_ACTION_URL", LinkProviderUtils.getAcceptInvitationToJoinSpaceUrl(space.getId(), notification.getTo()));
-    templateContext.put("REFUSE_SPACE_INVITATION_ACTION_URL", LinkProviderUtils.getIgnoreInvitationToJoinSpaceUrl(space.getId(), notification.getTo()));
+    templateContext.put("ACCEPT_SPACE_INVITATION_ACTION_URL", LinkProviderUtils.getAcceptInvitationToJoinSpaceUrl(space.getId(), toUser));
+    templateContext.put("REFUSE_SPACE_INVITATION_ACTION_URL", LinkProviderUtils.getIgnoreInvitationToJoinSpaceUrl(space.getId(), toUser));
     String body = TemplateUtils.processGroovy(templateContext);
     
     return messageInfo.subject(subject).body(body).end();
@@ -83,19 +86,20 @@ public class SpaceInvitationPlugin extends AbstractNotificationPlugin {
 
   @Override
   public boolean makeDigest(NotificationContext ctx, Writer writer) {
-    List<NotificationInfo> notifications = ctx.getNotificationInfos();
-    NotificationInfo first = notifications.get(0);
-    String language = getLanguage(first);
-    
-    TemplateContext templateContext = new TemplateContext(first.getKey().getId(), language);
-    Map<String, List<String>> receiverMap = new LinkedHashMap<String, List<String>>();
-    
     try {
-      for (NotificationInfo message : notifications) {
-        SocialNotificationUtils.processInforSendTo(receiverMap, first.getTo(), message.getValueOwnerParameter(SocialNotificationUtils.SPACE_ID.getKey()));
+      NotificationDataStorage dataStorage = CommonsUtils.getService(NotificationDataStorage.class);
+      List<NTFInforkey> infoKeys = ctx.getNotificationInfos();
+      String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+      String language = NotificationPluginUtils.getLanguage(toUser);
+      TemplateContext templateContext = new TemplateContext(getId(), language);
+      Map<String, List<String>> receiverMap = new LinkedHashMap<String, List<String>>();
+
+      for (NTFInforkey infoKey : infoKeys) {
+        NotificationInfo message = dataStorage.get(infoKey.getUUID());
+        SocialNotificationUtils.processInforSendTo(receiverMap, toUser, message.getValueOwnerParameter(SocialNotificationUtils.SPACE_ID.getKey()));
       }
       writer.append(SocialNotificationUtils.getMessageByIds(receiverMap, templateContext, "space"));
-    } catch (IOException e) {
+    } catch (Exception e) {
       ctx.setException(e);
       return false;
     }

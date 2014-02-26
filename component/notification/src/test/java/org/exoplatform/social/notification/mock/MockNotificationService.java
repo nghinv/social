@@ -22,10 +22,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.model.UserSetting;
+import org.exoplatform.commons.api.notification.node.NTFInforkey;
+import org.exoplatform.commons.api.notification.service.NotificationService;
 import org.exoplatform.commons.api.notification.service.setting.PluginSettingService;
 import org.exoplatform.commons.api.notification.service.setting.UserSettingService;
-import org.exoplatform.commons.api.notification.service.storage.NotificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.listener.Event;
 
 public class MockNotificationService implements NotificationService {
 
@@ -102,6 +104,14 @@ public class MockNotificationService implements NotificationService {
     for (NotificationInfo message : messages) {
       process(message);
     }
+  }
+
+  @Override
+  public void addEvent(Event<String, NTFInforkey> event) {
+  }
+
+  @Override
+  public void processEvents() {
   }
 
 }

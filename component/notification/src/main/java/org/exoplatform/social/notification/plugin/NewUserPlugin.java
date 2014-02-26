@@ -16,16 +16,17 @@
  */
 package org.exoplatform.social.notification.plugin;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.MessageInfo;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
+import org.exoplatform.commons.api.notification.node.NTFInforkey;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationPlugin;
 import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
 import org.exoplatform.commons.api.notification.service.setting.UserSettingService;
+import org.exoplatform.commons.api.notification.service.storage.NotificationDataStorage;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -72,12 +73,12 @@ public class NewUserPlugin extends AbstractNotificationPlugin {
   @Override
   public MessageInfo makeMessage(NotificationContext ctx) {
     MessageInfo messageInfo = new MessageInfo();
-    
+    String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+    String language = NotificationPluginUtils.getLanguage(toUser);
     NotificationInfo notification = ctx.getNotificationInfo();
+    TemplateContext templateContext = new TemplateContext(getId(), language);
     
-    String language = getLanguage(notification);
-    TemplateContext templateContext = new TemplateContext(notification.getKey().getId(), language);
-    SocialNotificationUtils.addFooterAndFirstName(notification.getTo(), templateContext);
+    SocialNotificationUtils.addFooterAndFirstName(toUser, templateContext);
 
     String remoteId = notification.getValueOwnerParameter(SocialNotificationUtils.REMOTE_ID.getKey());
     Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteId, true);
@@ -90,7 +91,7 @@ public class NewUserPlugin extends AbstractNotificationPlugin {
     
     templateContext.put("PROFILE_URL", LinkProviderUtils.getRedirectUrl("user", identity.getRemoteId()));
     templateContext.put("AVATAR", LinkProviderUtils.getUserAvatarUrl(userProfile));
-    templateContext.put("CONNECT_ACTION_URL", LinkProviderUtils.getInviteToConnectUrl(identity.getRemoteId(), notification.getTo()));
+    templateContext.put("CONNECT_ACTION_URL", LinkProviderUtils.getInviteToConnectUrl(identity.getRemoteId(), toUser));
     String body = TemplateUtils.processGroovy(templateContext);
     
     return messageInfo.subject(subject).body(body).end();
@@ -98,20 +99,20 @@ public class NewUserPlugin extends AbstractNotificationPlugin {
 
   @Override
   public boolean makeDigest(NotificationContext ctx, Writer writer) {
-    List<NotificationInfo> notifications = ctx.getNotificationInfos();
-    NotificationInfo first = notifications.get(0);
-
-    String language = getLanguage(first);
-    TemplateContext templateContext = new TemplateContext(first.getKey().getId(), language);
-    
-    int count = notifications.size();
-    String[] keys = {"USER", "USER_LIST", "LAST3_USERS"};
-    String key = "";
-    StringBuilder value = new StringBuilder();
     try {
+      List<NTFInforkey> infoKeys = ctx.getNotificationInfos();
+      NotificationDataStorage dataStorage = CommonsUtils.getService(NotificationDataStorage.class);
+      String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+      String language = NotificationPluginUtils.getLanguage(toUser);
+      TemplateContext templateContext = new TemplateContext(getId(), language);
+      
+      int count = infoKeys.size();
+      String[] keys = {"USER", "USER_LIST", "LAST3_USERS"};
+      String key = "";
+      StringBuilder value = new StringBuilder();
       writer.append("<li style=\"margin: 0 0 13px 14px; font-size: 13px; line-height: 18px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif;\">");
       for (int i = 0; i < count && i < 3; i++) {
-        String remoteId = notifications.get(i).getValueOwnerParameter(SocialNotificationUtils.REMOTE_ID.getKey());
+        String remoteId = dataStorage.get(infoKeys.get(i).getUUID()).getValueOwnerParameter(SocialNotificationUtils.REMOTE_ID.getKey());
         Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteId, true);
         //
         if (i > 1 && count == 3) {
@@ -126,7 +127,7 @@ public class NewUserPlugin extends AbstractNotificationPlugin {
       }
       templateContext.put(key, value.toString());
       if(count > 3) {
-        templateContext.put("COUNT", SocialNotificationUtils.buildRedirecUrl("connections", first.getTo(), String.valueOf((count - 3))));
+        templateContext.put("COUNT", SocialNotificationUtils.buildRedirecUrl("connections", toUser, String.valueOf((count - 3))));
       }
       
       String portalName = System.getProperty("exo.notifications.portalname", "eXo");
@@ -137,7 +138,7 @@ public class NewUserPlugin extends AbstractNotificationPlugin {
       String digester = TemplateUtils.processDigest(templateContext.digestType(count));
       writer.append(digester);
       writer.append("</li>");
-    } catch (IOException e) {
+    } catch (Exception e) {
       ctx.setException(e);
       return false;
     }

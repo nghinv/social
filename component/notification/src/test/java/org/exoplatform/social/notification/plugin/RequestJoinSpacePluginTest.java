@@ -27,7 +27,6 @@ import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.model.NotificationKey;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationPlugin;
 import org.exoplatform.commons.notification.impl.NotificationContextImpl;
-import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.notification.AbstractPluginTest;
 
@@ -158,7 +157,8 @@ public class RequestJoinSpacePluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "The following users have asked to join the my space 1 space: John Anthony, Mary Kelly.");
@@ -182,7 +182,8 @@ public class RequestJoinSpacePluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "The following users have asked to join the my space 1 space: Demo gtn, John Anthony.");
@@ -213,7 +214,8 @@ public class RequestJoinSpacePluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "The following users have asked to join the my space 1 space: Demo gtn, Mary Kelly.");
@@ -253,7 +255,8 @@ public class RequestJoinSpacePluginTest extends AbstractPluginTest {
     }
     Writer writer = new StringWriter();
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
-    ctx.setNotificationInfos(messages);
+    dataStorage.addAll(messages);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
     getPlugin().buildDigest(ctx, writer);
     
     assertDigest(writer, "The following users have asked to join the my space 1 space: John Anthony, Mary Kelly.");

@@ -16,7 +16,6 @@
  */
 package org.exoplatform.social.notification.plugin;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -26,9 +25,13 @@ import java.util.Map;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.MessageInfo;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
+import org.exoplatform.commons.api.notification.node.NTFInforkey;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationPlugin;
+import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
+import org.exoplatform.commons.api.notification.service.storage.NotificationDataStorage;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
@@ -64,12 +67,12 @@ public class RequestJoinSpacePlugin extends AbstractNotificationPlugin {
   @Override
   public MessageInfo makeMessage(NotificationContext ctx) {
     MessageInfo messageInfo = new MessageInfo();
-    
+    String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+    String language = NotificationPluginUtils.getLanguage(toUser);
     NotificationInfo notification = ctx.getNotificationInfo();
-    
-    String language = getLanguage(notification);
     TemplateContext templateContext = new TemplateContext(notification.getKey().getId(), language);
-    SocialNotificationUtils.addFooterAndFirstName(notification.getTo(), templateContext);
+
+    SocialNotificationUtils.addFooterAndFirstName(toUser, templateContext);
 
     String spaceId = notification.getValueOwnerParameter(SocialNotificationUtils.SPACE_ID.getKey());
     Space space = Utils.getSpaceService().getSpaceById(spaceId);
@@ -92,28 +95,28 @@ public class RequestJoinSpacePlugin extends AbstractNotificationPlugin {
 
   @Override
   public boolean makeDigest(NotificationContext ctx, Writer writer) {
-    List<NotificationInfo> notifications = ctx.getNotificationInfos();
-    NotificationInfo first = notifications.get(0);
-
-    String language = getLanguage(first);
-    TemplateContext templateContext = new TemplateContext(first.getKey().getId(), language);
-    
-    Map<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-
     try {
-      for (NotificationInfo message : notifications) {
+      NotificationDataStorage dataStorage = CommonsUtils.getService(NotificationDataStorage.class);
+      List<NTFInforkey> infoKeys = ctx.getNotificationInfos();
+
+      String language = NotificationPluginUtils.getLanguage(ctx.value(NotificationPluginUtils.SENDTO));
+      TemplateContext templateContext = new TemplateContext(getId(), language);
+
+      Map<String, List<String>> map = new LinkedHashMap<String, List<String>>();
+
+      for (NTFInforkey infoKey : infoKeys) {
+        NotificationInfo message = dataStorage.get(infoKey.getUUID());
         String spaceId = message.getValueOwnerParameter(SocialNotificationUtils.SPACE_ID.getKey());
         String fromUser = message.getValueOwnerParameter("request_from");
         //
         SocialNotificationUtils.processInforSendTo(map, spaceId, fromUser);
       }
       writer.append(SocialNotificationUtils.getMessageByIds(map, templateContext));
-    } catch (IOException e) {
+    } catch (Exception e) {
       ctx.setException(e);
       return false;
     }
-    
-    
+
     return true;
   }
 

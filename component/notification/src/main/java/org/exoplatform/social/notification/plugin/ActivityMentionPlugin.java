@@ -16,7 +16,6 @@
  */
 package org.exoplatform.social.notification.plugin;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,9 +25,13 @@ import java.util.Map;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.MessageInfo;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
+import org.exoplatform.commons.api.notification.node.NTFInforkey;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationPlugin;
+import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
+import org.exoplatform.commons.api.notification.service.storage.NotificationDataStorage;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -65,12 +68,12 @@ public class ActivityMentionPlugin extends AbstractNotificationPlugin {
   @Override
   public MessageInfo makeMessage(NotificationContext ctx) {
     MessageInfo messageInfo = new MessageInfo();
-    
+    String toUser = ctx.value(NotificationPluginUtils.SENDTO);
+    String language = NotificationPluginUtils.getLanguage(toUser);
     NotificationInfo notification = ctx.getNotificationInfo();
-    String language = getLanguage(notification);
 
-    TemplateContext templateContext = new TemplateContext(notification.getKey().getId(), language);
-    SocialNotificationUtils.addFooterAndFirstName(notification.getTo(), templateContext);
+    TemplateContext templateContext = new TemplateContext(getId(), language);
+    SocialNotificationUtils.addFooterAndFirstName(toUser, templateContext);
     
     String activityId = notification.getValueOwnerParameter(SocialNotificationUtils.ACTIVITY_ID.getKey());
     ExoSocialActivity activity = Utils.getActivityManager().getActivity(activityId);
@@ -100,32 +103,33 @@ public class ActivityMentionPlugin extends AbstractNotificationPlugin {
 
   @Override
   public boolean makeDigest(NotificationContext ctx, Writer writer) {
-    List<NotificationInfo> notifications = ctx.getNotificationInfos();
-    NotificationInfo first = notifications.get(0);
-
-    String language = getLanguage(first);
-    TemplateContext templateContext = new TemplateContext(first.getKey().getId(), language);
-    
-    Map<String, List<String>> receiverMap = new LinkedHashMap<String, List<String>>();
     try {
-      for (NotificationInfo notification : notifications) {
+      NotificationDataStorage dataStorage = CommonsUtils.getService(NotificationDataStorage.class);
+      List<NTFInforkey> infoKeys = ctx.getNotificationInfos();
+
+      String language = NotificationPluginUtils.getLanguage(ctx.value(NotificationPluginUtils.SENDTO));
+      TemplateContext templateContext = new TemplateContext(getId(), language);
+      Map<String, List<String>> receiverMap = new LinkedHashMap<String, List<String>>();
+
+      for (NTFInforkey infoKey : infoKeys) {
+        NotificationInfo notification = dataStorage.get(infoKey.getUUID());
         String activityId = notification.getValueOwnerParameter(SocialNotificationUtils.ACTIVITY_ID.getKey());
         ExoSocialActivity activity = Utils.getActivityManager().getActivity(activityId);
         Identity identity = Utils.getIdentityManager().getIdentity(activity.getPosterId(), true);
-        
+
         if (activity.isComment()) {
           activity = Utils.getActivityManager().getParentActivity(activity);
         }
 
-        //make the list receivers who will send mail to them.
+        // make the list receivers who will send mail to them.
         SocialNotificationUtils.processInforSendTo(receiverMap, activity.getId(), identity.getRemoteId());
       }
       writer.append(SocialNotificationUtils.getMessageByIds(receiverMap, templateContext));
-    } catch (IOException e) {
+    } catch (Exception e) {
       ctx.setException(e);
       return false;
     }
-    
+
     return true;
   }
 

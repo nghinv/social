@@ -126,7 +126,9 @@ public class LikePluginTest extends AbstractPluginTest {
     
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     list.set(0, list.get(0).setTo(rootIdentity.getRemoteId()));
-    ctx.setNotificationInfos(list);
+    dataStorage.addAll(list);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
+
     Writer writer = new StringWriter();
     getPlugin().buildDigest(ctx, writer);
     assertDigest(writer, "Mary Kelly, Demo gtn, John Anthony like your activity: root post an activity");

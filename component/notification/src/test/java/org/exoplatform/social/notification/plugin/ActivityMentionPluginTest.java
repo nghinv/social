@@ -146,7 +146,9 @@ public class ActivityMentionPluginTest extends AbstractPluginTest {
     
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     toJohn.set(0, toJohn.get(0).setTo(johnIdentity.getRemoteId()));
-    ctx.setNotificationInfos(toJohn);
+    dataStorage.addAll(toJohn);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
+
     Writer writer = new StringWriter();
     getPlugin().buildDigest(ctx, writer);
     assertDigest(writer, "Mary Kelly, Demo gtn, Root Root have mentioned you in an activity: mary mention John Anthony and Demo gtn");
@@ -175,7 +177,9 @@ public class ActivityMentionPluginTest extends AbstractPluginTest {
     
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     toJohn.set(0, toJohn.get(0).setTo(johnIdentity.getRemoteId()));
-    ctx.setNotificationInfos(toJohn);
+    dataStorage.addAll(toJohn);
+    ctx.setNotificationInfos(dataStorage.getInforKeys());
+
     Writer writer = new StringWriter();
     getPlugin().buildDigest(ctx, writer);
     assertDigest(writer, "Mary Kelly, Demo gtn have mentioned you in an activity: mary mention John Anthony and Demo gtn");
